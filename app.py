@@ -10,7 +10,7 @@ app.secret_key = 'jdsfnansofnoq'
 
 def create_connection():
     conn = sqlite3.connect('sqlite.db', check_same_thread=False)
-    conn.row_factory = sqlite3.row
+    conn.row_factory = sqlite3.Row
     return conn
 
 
@@ -50,7 +50,7 @@ def add_post():
 
 @app.route('/')
 def view_posts():
-    conn = sqlite3.connect('sqlite.db')
+    conn = create_connection()
     cursor = conn.cursor()
     cursor.execute("""
     select * from posts
@@ -62,7 +62,7 @@ def view_posts():
 @app.route('/update_post/<int:post_id>', methods=["GET", "POST"])
 def update_post(post_id):
     form = UpdateForm()
-    conn = sqlite3.connect('sqlite.db')
+    conn = create_connection()
     cursor = conn.cursor()
     post = cursor.execute("""
     select * from posts where id = ?
@@ -85,7 +85,7 @@ def update_post(post_id):
     return render_template('update.html', post=post, form=form)
 
 
-@app.route('delete_post/<int:post_id>', methods=["POST"])
+@app.route('/delete_post/<int:post_id>', methods=["POST"])
 def delete_post(post_id):
     conn = sqlite3.connect('sqlite.db')
     cursor = create_cursor()
